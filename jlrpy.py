@@ -9,6 +9,7 @@ import datetime
 import calendar
 import uuid
 import time
+import os, ssl, platform
 
 class Connection(object):
     """Connection to the JLR Remote Car API"""
@@ -22,6 +23,13 @@ class Connection(object):
         The email address and password associated with your Jaguar InControl account is required.
         """
         self.email = email
+
+        if (not os.environ.get('PYTHONHTTPSVERIFY', '')
+            and getattr(ssl, '_create_unverified_context', None)
+            and (os.name == 'posix')
+            and (platform.system().lower() == 'darwin')):
+            print("We are running macOS so disable SSL")
+            ssl._create_default_https_context = ssl._create_unverified_context
 
         if device_id:
             self.device_id = device_id
